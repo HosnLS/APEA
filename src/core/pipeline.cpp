@@ -68,6 +68,7 @@ int main() {
                 AimBox aimbox;
                 infer.Infer(pData, aimbox);
 
+
                 // paint
                 aimbox.xl += rect.left;
                 aimbox.xr += rect.left;
@@ -81,8 +82,8 @@ int main() {
 //                                 p.y + ceil(0.1 * ((aimbox.yl + aimbox.yr) / 2 - p.y)));
                 if (GetAsyncKeyState(VK_LBUTTON) < 0)
                     mouse_event(MOUSEEVENTF_MOVE,
-                                ceil(0.2 * ((aimbox.xl + aimbox.xr) / 2 - p.x)),
-                                ceil(0.2 * ((aimbox.yl + aimbox.yr) / 2 - p.y)), 0, 0);
+                                ceil(0.35 * ((aimbox.xl + aimbox.xr) / 2 - p.x)),
+                                ceil(0.3 * ((aimbox.yl + aimbox.yr) / 2 - p.y)), 0, 0);
             } else {
                 Sleep(1);
             }
