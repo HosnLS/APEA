@@ -7,5 +7,5 @@
 * Nanodet 416 1.5x
 * Nanodet 320
 ## TODO
-- [ ] PID control/ Kalman filter
+- [ ] PID control / Kalman filter
 - [ ] Model fine-tune with specific dataset
