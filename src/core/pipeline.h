@@ -5,7 +5,7 @@
 #ifndef FPSHELPER_PIPELINE_H
 #define FPSHELPER_PIPELINE_H
 
-struct AimBox{
+struct AimBox {
     int xl;
     int xr;
     int yl;

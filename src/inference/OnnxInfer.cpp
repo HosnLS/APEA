@@ -6,9 +6,9 @@
 #include <cpu_provider_factory.h>
 #include <tensorrt_provider_factory.h>
 
-#include "NndtInfer.h"
+#include "OnnxInfer.h"
 
-NndtInfer::NndtInfer(const ORTCHAR_T *model_path, int w, int h, char inferMode) {
+OnnxInfer::OnnxInfer(const ORTCHAR_T *model_path, int w, int h, char inferMode) {
     InferMode = inferMode;
     Width = w;
     Height = h;
@@ -37,7 +37,8 @@ NndtInfer::NndtInfer(const ORTCHAR_T *model_path, int w, int h, char inferMode) 
     ));
 }
 
-bool NndtInfer::Infer(void *pData, AimBox &aimbox) {
+bool OnnxInfer::Infer(void *pData, AimBox &aimbox) {
+    // Normalize data
     for (int row = 0; row < Height; ++row) {
         for (int col = 0; col < Width; ++col) {
             DataBuffer[row * Width + col] =
@@ -64,7 +65,7 @@ bool NndtInfer::Infer(void *pData, AimBox &aimbox) {
 
     int outputFeat = 0;
     std::array<int, 4> stride{8, 16, 32, 64};
-    for(auto st: stride){
+    for (auto st: stride) {
         int xm = (Width + st - 1) / st;
         int ym = (Height + st - 1) / st;
         outputFeat += xm * ym;
@@ -96,12 +97,12 @@ bool NndtInfer::Infer(void *pData, AimBox &aimbox) {
 
 
     int curInd = maxInd;
-    for(auto st: stride){
+    for (auto st: stride) {
         int xm = (Width + st - 1) / st;
         int ym = (Height + st - 1) / st;
-        if(curInd >= xm * ym)
+        if (curInd >= xm * ym)
             curInd -= xm * ym;
-        else{
+        else {
             aimbox.xl = round((curInd % xm - boxSmp[0]) * st);
             aimbox.xr = round((curInd % xm + boxSmp[2]) * st);
             aimbox.yl = round((curInd / xm - boxSmp[1]) * st);
@@ -113,7 +114,7 @@ bool NndtInfer::Infer(void *pData, AimBox &aimbox) {
     return true;
 }
 
-NndtInfer::~NndtInfer() {
+OnnxInfer::~OnnxInfer() {
     delete Session;
     delete SessionOptions;
     delete Env;

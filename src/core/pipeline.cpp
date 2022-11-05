@@ -8,7 +8,7 @@
 #include "opencv2/highgui.hpp"
 
 #include "../capture/DXGICapture.h"
-#include "../inference/NndtInfer.h"
+#include "../inference/TRTInfer.h"
 #include "../paint/GDIPaint.h"
 
 using namespace std;
@@ -31,18 +31,20 @@ private:
     bool lastSwt{false};
 };
 
-#define r 320
+#define MODEL_PATH "C:/Users/HosnLS/source/repos/20220723_FpsHelper/FPS-Helper/workspace/nanodet-plus-m_320.trt"
+#define MODEL_R 320
 
 int main() {
     cout << "Loading..." << endl;
 
     SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
-    void *pData = new char[r * r * 4];
+    void *pData = new char[MODEL_R * MODEL_R * 4];
 
-    VideoDXGICaptor ss;
+
     GDIPaint paint;
-//    NndtInfer infer(L"nanodet-plus-m-1.5x_416.onnx", 416, 416, 't');
-    NndtInfer infer(L"nanodet-plus-m_320.onnx", r, r, 't');
+//    OnnxInfer infer(MODEL_PATH, MODEL_R, MODEL_R, 't');
+    TRTInfer infer(MODEL_PATH, MODEL_R, MODEL_R);
+    VideoDXGICaptor ss;
 
     cout << "FPSHelper" << endl;
     cout << "Press F7+F8 to switch between working and idle" << endl;
@@ -58,10 +60,10 @@ int main() {
                 GetCursorPos(&p);
 
                 // get frame
-                RECT rect{max(0l, p.x - r / 2),
-                          max(0l, p.y - r / 2),
-                          min(GetSystemMetrics(SM_CXSCREEN) - 1l, p.x + r / 2),
-                          min(GetSystemMetrics(SM_CYSCREEN) - 1l, p.y + r / 2)};
+                RECT rect{max(0l, p.x - MODEL_R / 2),
+                          max(0l, p.y - MODEL_R / 2),
+                          min(GetSystemMetrics(SM_CXSCREEN) - 1l, p.x + MODEL_R / 2),
+                          min(GetSystemMetrics(SM_CYSCREEN) - 1l, p.y + MODEL_R / 2)};
                 ss.CaptureImage(rect, pData);
 
                 // infer
@@ -69,21 +71,27 @@ int main() {
                 infer.Infer(pData, aimbox);
 
 
-                // paint
+//              paint
                 aimbox.xl += rect.left;
                 aimbox.xr += rect.left;
                 aimbox.yl += rect.top;
                 aimbox.yr += rect.top;
-//                paint.Paint(aimbox);
+                paint.Paint(aimbox);
 
                 // aim
 //                if (GetAsyncKeyState(VK_LBUTTON) < 0)
 //                    SetCursorPos(p.x + ceil(0.1 * ((aimbox.xl + aimbox.xr) / 2 - p.x)),
 //                                 p.y + ceil(0.1 * ((aimbox.yl + aimbox.yr) / 2 - p.y)));
-                if (GetAsyncKeyState(VK_LBUTTON) < 0)
-                    mouse_event(MOUSEEVENTF_MOVE,
-                                ceil(0.35 * ((aimbox.xl + aimbox.xr) / 2 - p.x)),
-                                ceil(0.3 * ((aimbox.yl + aimbox.yr) / 2 - p.y)), 0, 0);
+
+//                if (GetAsyncKeyState(VK_LBUTTON) < 0)
+//                    mouse_event(MOUSEEVENTF_MOVE,
+//                                ceil(0.35 * ((aimbox.xl + aimbox.xr) / 2 - p.x)),
+//                                ceil(0.3 * ((aimbox.yl + aimbox.yr) / 2 - p.y)), 0, 0);
+
+
+            cv::Mat img(MODEL_R, MODEL_R, CV_8UC4, pData);
+            cv::imshow("img", img);
+            cv::waitKey(1);
             } else {
                 Sleep(1);
             }
