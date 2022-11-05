@@ -31,7 +31,7 @@ private:
     bool lastSwt{false};
 };
 
-#define MODEL_PATH "C:/Users/HosnLS/source/repos/20220723_FpsHelper/FPS-Helper/workspace/nanodet-plus-m_320.trt"
+#define MODEL_PATH "C:/Users/HosnLS/source/repos/20220723_APEA/APEA/workspace/nanodet-plus-m_320.trt"
 #define MODEL_R 320
 
 int main() {
@@ -89,9 +89,9 @@ int main() {
 //                                ceil(0.3 * ((aimbox.yl + aimbox.yr) / 2 - p.y)), 0, 0);
 
 
-            cv::Mat img(MODEL_R, MODEL_R, CV_8UC4, pData);
-            cv::imshow("img", img);
-            cv::waitKey(1);
+//            cv::Mat img(MODEL_R, MODEL_R, CV_8UC4, pData);
+//            cv::imshow("img", img);
+//            cv::waitKey(1);
             } else {
                 Sleep(1);
             }
